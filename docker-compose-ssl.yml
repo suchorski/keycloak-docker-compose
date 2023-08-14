@@ -1,0 +1,37 @@
+version: '3.9'
+
+networks:
+  local:
+    ipam:
+      config:
+        - subnet: ${SUBNET:-172.16.0.0/29}
+
+services:
+  nginx:
+    image: nginx:${NGINX_VERSION:-latest}
+    environment:
+      KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
+    mem_limit: 50m
+    mem_reservation: 20m
+    container_name: nginx
+    volumes:
+      - ./nginx-ssl/templates:/etc/nginx/templates
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    restart: always
+    networks:
+      - local
+  certbot:
+    image: certbot/certbot:${CERTBOT_VERSION:-latest}
+    environment:
+      CERTBOT_LETSENCRYPT_EMAIL: ${CERTBOT_LETSENCRYPT_EMAIL}
+      KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
+    mem_limit: 20m
+    mem_reservation: 10m
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --non-interactive --webroot -w /var/www/certbot --email ${CERTBOT_LETSENCRYPT_EMAIL} -d ${KEYCLOAK_DOMAIN} --agree-tos
+    depends_on:
+      - nginx

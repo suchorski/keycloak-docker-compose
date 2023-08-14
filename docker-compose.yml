@@ -1,0 +1,84 @@
+version: '3.9'
+
+volumes:
+  mariadb_data:
+    driver: local
+
+networks:
+  local:
+    ipam:
+      config:
+        - subnet: ${SUBNET:-172.16.0.0/29}
+
+services:
+  mariadb:
+    image: mariadb:${MARIADB_VERSION:-latest}
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-toor}
+      MARIADB_DATABASE: keycloak
+      MARIADB_USER: keycloak
+      MARIADB_PASSWORD: ${MARIADB_KEYCLOAK_PASSWORD:-keycloak}
+    mem_limit: 300m
+    mem_reservation: 200m
+    container_name: mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    restart: always
+    networks:
+      - local
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION:-latest}
+    environment:
+      KC_DB: mariadb
+      KC_DB_SCHEMA: keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${MARIADB_KEYCLOAK_PASSWORD:-keycloak}
+      KC_DB_URL_HOST: mariadb
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_PROXY: edge
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_URL: http://${KEYCLOAK_DOMAIN}
+    mem_limit: 500m
+    mem_reservation: 400m
+    command: start
+    container_name: keycloak
+    volumes:
+      - ./keycloak/themes:/opt/keycloak/themes
+    restart: always
+    networks:
+      - local
+    depends_on:
+      - mariadb
+  nginx:
+    image: nginx:${NGINX_VERSION:-latest}
+    environment:
+      KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
+    mem_limit: 50m
+    mem_reservation: 20m
+    container_name: nginx
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    ports:
+      - 80:80
+      - 443:443
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    restart: always
+    networks:
+      - local
+  certbot:
+    image: certbot/certbot:${CERTBOT_VERSION:-latest}
+    environment:
+      CERTBOT_LETSENCRYPT_EMAIL: ${CERTBOT_LETSENCRYPT_EMAIL}
+      KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
+    mem_limit: 20m
+    mem_reservation: 10m
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --non-interactive --webroot -w /var/www/certbot --email ${CERTBOT_LETSENCRYPT_EMAIL} -d ${KEYCLOAK_DOMAIN} --agree-tos
+    depends_on:
+      - nginx
