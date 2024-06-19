@@ -25,6 +25,16 @@ This project is a complete stack for running a secure Keycloak server with Maria
 5. Run `docker compose up -d` to start the stack.
 6. Configure the `crontab` to renew the SSL certificates automatically each 12 hours with the command: `docker compose -f /path/to/docker-compose.yml up certbot`
 
+## Informations
+
+### Keycloak
+
+Default admin username and password is: `admin`.
+
+### Mail server
+
+You can use mail SMTP url as `mail` and port `25` without authentication to send mails from Keycloak.
+
 ## Configuration
 
 ### Environment variables
