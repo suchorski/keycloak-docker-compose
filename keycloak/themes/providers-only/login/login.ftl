@@ -2,11 +2,20 @@
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('username','password') displayInfo=realm.password && realm.registrationAllowed && !registrationDisabled??; section>
     <#if section = "header">
         ${msg("loginAccountTitle")}
+    <#elseif section = "info" >
+        <#if realm.password && realm.registrationAllowed && !registrationDisabled??>
+            <div id="kc-registration-container">
+                <div id="kc-registration">
+                    <span>${msg("noAccount")} <a tabindex="8"
+                                                 href="${url.registrationUrl}">${msg("doRegister")}</a></span>
+                </div>
+            </div>
+        </#if>
     <#elseif section = "socialProviders" >
-        <#if realm.password && social.providers??>
+        <#if realm.password && social?? && social.providers?has_content>
             <div id="kc-social-providers" class="${properties.kcFormSocialAccountSectionClass!}">
                 <hr/>
-                <h4>${msg("identity-provider-login-label")}</h4>
+                <h2>${msg("identity-provider-login-label")}</h2>
 
                 <ul class="${properties.kcFormSocialAccountListClass!} <#if social.providers?size gt 3>${properties.kcFormSocialAccountListGridClass!}</#if>">
                     <#list social.providers as p>
