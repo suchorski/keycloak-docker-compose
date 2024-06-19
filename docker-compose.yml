@@ -36,7 +36,7 @@ services:
       KC_DB_URL_HOST: mariadb
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_PROXY: edge
+      KC_PROXY_HEADERS: xforwarded
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_URL: http://${KEYCLOAK_DOMAIN}
     mem_limit: 500m
