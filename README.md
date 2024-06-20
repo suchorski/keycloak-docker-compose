@@ -4,7 +4,7 @@
 	 </a>
 <p>
 
-# Keycloak + MariaDB + Nginx + Certbot in a Docker Compose stack
+# Keycloak + MariaDB + Nginx + Certbot + Mail in a Docker Compose stack
 
 ## Introduction
 
