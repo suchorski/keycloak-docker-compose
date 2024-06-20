@@ -33,7 +33,7 @@ Default admin username and password is: `admin`.
 
 ### Mail server
 
-You can use mail SMTP url as `mail` and port `25` without authentication to send mails from Keycloak.
+You can use mail SMTP hostname as `mail` and port `25` without authentication to send mails from Keycloak.
 
 ## Configuration
 
