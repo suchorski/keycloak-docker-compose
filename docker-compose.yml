@@ -17,7 +17,6 @@ services:
       MARIADB_USER: keycloak
       MARIADB_PASSWORD: ${MARIADB_KEYCLOAK_PASSWORD:-keycloak}
     mem_limit: 300m
-    mem_reservation: 200m
     container_name: mariadb
     volumes:
       - mariadb_data:/var/lib/mysql
@@ -45,7 +44,6 @@ services:
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_URL: http://${KEYCLOAK_DOMAIN}
     mem_limit: 500m
-    mem_reservation: 400m
     command: start
     container_name: keycloak
     volumes:
@@ -60,8 +58,7 @@ services:
     image: nginx:${NGINX_VERSION:-latest}
     environment:
       KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
-    mem_limit: 50m
-    mem_reservation: 20m
+    mem_limit: 100m
     container_name: nginx
     volumes:
       - ./nginx/templates:/etc/nginx/templates
@@ -78,8 +75,7 @@ services:
     environment:
       CERTBOT_LETSENCRYPT_EMAIL: ${CERTBOT_LETSENCRYPT_EMAIL}
       KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
-    mem_limit: 20m
-    mem_reservation: 10m
+    mem_limit: 50m
     container_name: certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt

@@ -10,7 +10,7 @@ services:
     environment:
       KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
     mem_limit: 50m
-    mem_reservation: 20m
+    mem_reservation: 30m
     container_name: nginx
     volumes:
       - ./nginx-ssl/templates:/etc/nginx/templates
@@ -27,8 +27,8 @@ services:
     environment:
       CERTBOT_LETSENCRYPT_EMAIL: ${CERTBOT_LETSENCRYPT_EMAIL}
       KEYCLOAK_DOMAIN: ${KEYCLOAK_DOMAIN}
-    mem_limit: 20m
-    mem_reservation: 10m
+    mem_limit: 50m
+    mem_reservation: 30m
     container_name: certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt
