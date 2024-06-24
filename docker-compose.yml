@@ -26,6 +26,7 @@ services:
   mail:
     image: bytemark/smtp:latest
     container_name: mail
+    mem_limit: 50m
     restart: always
     networks:
       - local
