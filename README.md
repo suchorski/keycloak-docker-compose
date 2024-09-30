@@ -23,7 +23,7 @@ This project is a complete stack for running a secure Keycloak server with Maria
 3. Run `docker compose -f docker-compose-ssl.yml up -d` to generate the SSL certificates;
 4. Run `docker compose -f docker-compose-ssl.yml down` to stop the container;
 5. Run `docker compose up -d` to start the stack;
-6. Configure the `crontab` to renew the SSL certificates automatically each 12 hours with the command: `docker compose -f /path/to/docker-compose.yml up certbot`.
+6. Configure the `crontab` to renew the SSL certificates automatically each 12 hours with the command: `docker compose -f /path/to/docker-compose.yml up certbot && docker compose -f /path/to/docker-compose.yml exec nginx nginx -s reload`.
 
 ## Informations
 
